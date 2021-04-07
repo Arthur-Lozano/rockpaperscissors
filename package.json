@@ -1,0 +1,25 @@
+{
+  "name": "rockpaperscissors",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/hub.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arthur-Lozano/rockpaperscissors.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Arthur-Lozano/rockpaperscissors/issues"
+  },
+  "homepage": "https://github.com/Arthur-Lozano/rockpaperscissors#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7",
+    "socket.io": "^4.0.1",
+    "socket.io-client": "^4.0.1"
+  }
+}
