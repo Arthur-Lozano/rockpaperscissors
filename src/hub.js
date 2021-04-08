@@ -108,11 +108,11 @@ io.on("connection", (socket) => {
     } else if (result === false) {
       console.log("Player One Won");
       socket.to("gameRoom").emit("player1", p1);
-      socket.emit("player1", p2);
+      socket.emit("player1", p1);
     } else {
       console.log("Player two won");
       socket.emit("player2", p2);
-      socket.to("gameRoom").emit("player2", p1);
+      socket.to("gameRoom").emit("player2", p2);
     }
   }
 });
