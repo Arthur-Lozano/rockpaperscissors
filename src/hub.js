@@ -43,11 +43,9 @@ function compare(c1, c2) {
 
 io.on("connection", (socket) => {
   console.log("Up and running");
-  console.log(socket.id);
 
   socket.on("createGame", (yourName) => {
     console.log(`Thanks ${yourName} for joining the game!`);
-    socket.join("gameRoom");
 
     if (playerOne === null) {
       playerOne = { name: yourName, socketId: socket.id };
@@ -64,7 +62,7 @@ io.on("connection", (socket) => {
     // }
   });
 
-  socket.on("restart", (p1, p2) => {
+  socket.on("restart", () => {
     // if (playerOne === null) {
     //   playerOne = name;
     // } else {
@@ -98,7 +96,6 @@ io.on("connection", (socket) => {
       let result = compare(choiceOne, choiceTwo);
       choiceOne = null;
       choiceTwo = null;
-      console.log(socket.id);
       io.to(playerOne.socketId).emit("winner", result, playerOne, playerTwo);
       io.to(playerTwo.socketId).emit("winner", result, playerOne, playerTwo);
       // socket.to("gameRoom").emit("winner", result, playerOne, playerTwo);
