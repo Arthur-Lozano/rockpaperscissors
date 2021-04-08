@@ -26,14 +26,30 @@ tak.on('newGame', room => {
   console.log(`Waiting for player 2 to join ${room}`);
 })
 
-tak.on('results', payload => {
-  if (payload === 'draw') {
-    console.log('It was a tie');
-  } else if (payload === true) {
-    console.log('Player One Won');
-  } else {
-    console.log('Player two won');
-  }
+tak.on('draw', () => {
+  console.log('draw');
+})
+
+tak.on('player1', name => {
+  console.log(`Player ${name} wins!`);
+  rl.question('Want to play again? Yes or no?', response => {
+    if (response === 'yes') {
+      tak.emit('createGame', name)
+    } else {
+      rl.close();
+    }
+  })
+})
+
+tak.on('player2', name => {
+  console.log(`Player ${name} wins!`);
+  rl.question('Want to play again? Yes or no?', response => {
+    if (response === 'yes') {
+      tak.emit('createGame', name)
+    } else {
+      rl.close();
+    }
+  })
 })
 
 tak.on('startgame', (player) => {
@@ -52,6 +68,6 @@ function messageReceived() {
 }
 
 rl.on('close', () => {
-  console.log('Closing prompt');
+  console.log('Thanks for playing, bye bye');
   process.exit(0);
 })

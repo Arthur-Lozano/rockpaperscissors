@@ -18,6 +18,20 @@ let choiceOne = null;
 let choiceTwo = null;
 
 
+function getWinner(result, playerOne, playerTwo) {
+  if (result === 'draw') {
+    console.log('It was a tie');
+    io.emit('draw');
+  } else if (result === true) {
+    console.log('Player One Won');
+    io.emit('player1', playerOne);
+
+  } else {
+    console.log('Player two won');
+    io.emit('player2', playerTwo);
+  }
+}
+
 
 function compare(c1, c2) {
   if (c1 === c2) {
@@ -75,8 +89,10 @@ io.on('connection', (socket) => {
 
     if (choiceOne && choiceTwo) {
       let result = compare(choiceOne, choiceTwo);
+      choiceOne = null;
+      choiceTwo = null;
 
-      socket.emit('results', result);
+      getWinner(result, playerOne, playerTwo);
     }
   })
 
