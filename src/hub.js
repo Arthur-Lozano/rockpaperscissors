@@ -17,19 +17,6 @@ let playerTwo = null;
 let choiceOne = null;
 let choiceTwo = null;
 
-function getWinner(result, p1, p2) {
-  if (result === "draw") {
-    console.log("It was a tie");
-    io.emit("draw");
-  } else if (result === true) {
-    console.log("Player One Won");
-    io.emit("player1", p1);
-  } else {
-    console.log("Player two won");
-    io.emit("player2", p2);
-  }
-}
-
 function compare(c1, c2) {
   if (c1 === c2) {
     return "draw";
@@ -56,63 +43,82 @@ function compare(c1, c2) {
 
 io.on("connection", (socket) => {
   console.log("Up and running");
+  console.log(socket.id);
 
   socket.on("createGame", (yourName) => {
     console.log(`Thanks ${yourName} for joining the game!`);
     socket.join("gameRoom");
 
     if (playerOne === null) {
-      playerOne = yourName;
+      playerOne = { name: yourName, socketId: socket.id };
+      io.to(socket.id).emit("startgame", playerOne.name, socket.id);
     } else {
-      playerTwo = yourName;
+      playerTwo = { name: yourName, socketId: socket.id };
+      io.to(socket.id).emit("startgame", playerTwo.name, socket.id);
     }
-    if (playerOne && playerTwo) {
-      console.log("This is PLAYER ONE", playerOne);
-      console.log("This is PLAYER TWO", playerTwo);
-      socket.to("gameRoom").emit("startgame", playerOne);
-      socket.emit("startgame", playerTwo);
-    }
+    // if (playerOne && playerTwo) {
+    //   console.log("This is PLAYER ONE", playerOne, socket.id);
+    //   console.log("This is PLAYER TWO", playerTwo, socket.id);
+    //   socket.to("gameRoom").emit("startgame", playerOne, socket.id);
+    //   socket.emit("startgame", playerTwo, socket.id);
+    // }
   });
 
-  socket.on("restart", (name) => {
-    if (playerOne === null) {
-      playerOne = name;
-    } else {
-      playerTwo = name;
+  socket.on("restart", (p1, p2) => {
+    // if (playerOne === null) {
+    //   playerOne = name;
+    // } else {
+    //   playerTwo = name;
+    // }
+    if (socket.id === playerOne.socketId) {
+      io.to(playerOne.socketId).emit(
+        "startgame",
+        playerOne.name,
+        playerOne.socketId
+      );
     }
-    socket.to("gameRoom").emit("startgame", playerOne);
-    socket.emit("startgame", playerTwo);
+    if (socket.id === playerTwo.socketId) {
+      io.to(playerTwo.socketId).emit(
+        "startgame",
+        playerTwo.name,
+        playerTwo.socketId
+      );
+    }
   });
 
   socket.on("results", (payload) => {
     console.log("This is inside the results event", payload.player);
-    if (playerOne === payload.player) {
+    if (playerOne.socketId === payload.socket) {
       choiceOne = payload.choice;
-    } else {
+    }
+    if (playerTwo.socketId === payload.socket) {
       choiceTwo = payload.choice;
     }
-
     if (choiceOne && choiceTwo) {
       let result = compare(choiceOne, choiceTwo);
       choiceOne = null;
       choiceTwo = null;
-
-      getWinner(result, playerOne, playerTwo);
+      console.log(socket.id);
+      io.to(playerOne.socketId).emit("winner", result, playerOne, playerTwo);
+      io.to(playerTwo.socketId).emit("winner", result, playerOne, playerTwo);
+      // socket.to("gameRoom").emit("winner", result, playerOne, playerTwo);
+      // socket.emit("winner", result, playerOne, playerTwo);
+      // getWinner(result, playerOne, playerTwo);
     }
   });
 
-  function getWinner(result, p1, p2) {
-    if (result === "draw") {
-      console.log("It was a tie");
-      socket.emit("draw");
-    } else if (result === false) {
-      console.log("Player One Won");
-      socket.to("gameRoom").emit("player1", p1);
-      socket.emit("player1", p1);
-    } else {
-      console.log("Player two won");
-      socket.emit("player2", p2);
-      socket.to("gameRoom").emit("player2", p2);
-    }
-  }
+  // function getWinner(result, p1, p2) {
+  //   if (result === "draw") {
+  //     console.log("It was a tie");
+  //     socket.emit("winner", p1, p2);
+  //   } else if (result === false) {
+  //     console.log("Player One Won");
+  //     socket.to("gameRoom").emit("winner", p1, p2);
+  //     socket.emit("winner", p1, p2);
+  //   } else {
+  //     console.log("Player two won");
+  //     socket.emit("winner", p1, p2);
+  //     socket.to("gameRoom").emit("winner", p1, p2);
+  //   }
+  // }
 });

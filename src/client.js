@@ -20,44 +20,78 @@ tak.on("connect", () => {
   });
 });
 
-tak.on("draw", () => {
-  console.log("You both tied");
-  rl.question("Want to play again? Yes or no? ", (response) => {
-    if (response === "yes") {
-      tak.emit("restart");
-    } else {
-      rl.close();
-    }
-  });
+tak.on("winner", (results, p1, p2) => {
+  if (results === "draw") {
+    console.log("You both tied");
+    rl.question("Want to play again? Yes or no? ", (response) => {
+      if (response === "yes") {
+        tak.emit("restart", p1, p2);
+      } else {
+        rl.close();
+      }
+    });
+  }
+  if (results === true) {
+    console.log(`Player ${p1.name} wins!`);
+    rl.question("Want to play again? Yes or no? ", (response) => {
+      if (response === "yes") {
+        tak.emit("restart", p1, p2);
+      } else {
+        rl.close();
+      }
+    });
+  }
+  if (results === false) {
+    console.log(`Player ${p2.name} wins!`);
+    rl.question("Want to play again? Yes or no? ", (response) => {
+      if (response === "yes") {
+        tak.emit("restart", p1, p2);
+      } else {
+        rl.close();
+      }
+    });
+  }
 });
 
-tak.on("player1", (name) => {
-  console.log(`Player ${name} wins!`);
-  rl.question("Want to play again? Yes or no? ", (response) => {
-    if (response === "yes") {
-      tak.emit("restart", name);
-    } else {
-      rl.close();
-    }
-  });
-});
+// tak.on("draw", () => {
+//   console.log("You both tied");
+// rl.question("Want to play again? Yes or no? ", (response) => {
+//   if (response === "yes") {
+//     tak.emit("restart");
+//   } else {
+//     rl.close();
+//   }
+// });
+// });
 
-tak.on("player2", (name) => {
-  console.log(`Player ${name} wins!`);
-  rl.question("Want to play again? Yes or no? ", (response) => {
-    if (response === "yes") {
-      tak.emit("restart", name);
-    } else {
-      rl.close();
-    }
-  });
-});
+// tak.on("player1", (name) => {
+//   console.log(`Player ${name} wins!`);
+//   rl.question("Want to play again? Yes or no? ", (response) => {
+//     if (response === "yes") {
+//       tak.emit("restart", name);
+//     } else {
+//       rl.close();
+//     }
+//   });
+// });
 
-tak.on("startgame", (player) => {
+// tak.on("player2", (name) => {
+//   console.log(`Player ${name} wins!`);
+//   rl.question("Want to play again? Yes or no? ", (response) => {
+//     if (response === "yes") {
+//       tak.emit("restart", name);
+//     } else {
+//       rl.close();
+//     }
+//   });
+// });
+
+tak.on("startgame", (player, socket) => {
+  console.log(socket, player);
   rl.question("Please enter rock, paper, or scissor: ", (choice) => {
     console.log(`You chose ${choice}`);
     console.log(player);
-    tak.emit("results", { choice, player });
+    tak.emit("results", { choice, player, socket });
   });
 });
 
