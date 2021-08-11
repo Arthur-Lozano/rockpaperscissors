@@ -1,12 +1,3 @@
-# AWS CLOUD
-
-* The links to both of your deployed servers (GUI deploy and CLI deploy)
--
--
-
-
-
-
 
 
 # rockpaperscissors
